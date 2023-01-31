@@ -1,76 +1,72 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        List<String> dirListMain = new ArrayList<>();
+        dirListMain.add("D:/Games/src");
+        dirListMain.add("D:/Games/res");
+        dirListMain.add("D:/Games/savegames");
+        dirListMain.add("D:/Games/temp");
+
+        List<String> dirListSrc = new ArrayList<>();
+        dirListSrc.add("main");
+        dirListSrc.add("test");
+
+        List<String> dirListRes = new ArrayList<>();
+        dirListRes.add("drawables");
+        dirListRes.add("vectors");
+        dirListRes.add("icons");
+
+        List<String> fileListMain = new ArrayList<>();
+        fileListMain.add("Main.java");
+        fileListMain.add("Utils.java");
+
+        List<String> fileListTemp = new ArrayList<>();
+        fileListTemp.add("temp.txt");
+
         StringBuilder log = new StringBuilder();
-        File dirSrc = new File("D://Games/src");
-        if (dirSrc.mkdir()) {
-            log.append("Каталог " + dirSrc.getName() + " создан\n");
-        }
-        File dirRes = new File("D://Games/res");
-        if (dirRes.mkdir()) {
-            log.append("Каталог " + dirRes.getName() + " создан\n");
-        }
-        File dirSavegames = new File("D://Games/savegames");
-        if (dirSavegames.mkdir()) {
-            log.append("Каталог " + dirSavegames.getName() + " создан\n");
-        }
-        File dirTemp = new File("D://Games/temp");
-        if (dirTemp.mkdir()) {
-            log.append("Каталог " + dirTemp.getName() + " создан\n");
-        }
+        log.append(createDirectories(dirListMain));
+        log.append(createDirectories(dirListSrc));
+        log.append(createDirectories(dirListRes));
+        log.append(createFiles("D:/Games/src/main", fileListMain));
+        log.append(createFiles("D:/Games/temp", fileListTemp));
 
-        File dirMain = new File(dirSrc.getPath().concat("\\main"));
-        if (dirMain.mkdir()) {
-            log.append("Каталог " + dirMain.getName() + " создан\n");
-        }
-        File dirTest = new File(dirSrc.getPath().concat("\\test"));
-        if (dirTest.mkdir()) {
-            log.append("Каталог " + dirTest.getName() + " создан\n");
-        }
+        writeLogToFile("D:/Games/temp/temp.txt", log);
+    }
 
-        File fileMain = new File(dirMain.getPath().concat("\\Main.java"));
-        try {
-            if (fileMain.createNewFile()) {
-                log.append("Файл " + fileMain.getName() + " создан\n");
+    public static StringBuilder createDirectories(List<String> dirList){
+        StringBuilder log = new StringBuilder();
+        for(String dir : dirList){
+            File dirToCreate = new File(dir);
+            if(dirToCreate.mkdir()){
+                log.append("Каталог " + dirToCreate.getPath() + " создан\n");
             }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
         }
-        File fileUtils = new File(dirMain.getPath().concat("\\Utils.java"));
-        try {
-            if (fileUtils.createNewFile()) {
-                log.append("Файл " + fileUtils.getName() + " создан\n");
+        return log;
+    }
+
+    public static StringBuilder createFiles(String dir, List<String> fileList){
+        StringBuilder log = new StringBuilder();
+        for(String fileName : fileList){
+            File fileTemp = new File(dir + fileName);
+            try{
+                if(fileTemp.createNewFile()){
+                    log.append("Файл " + fileTemp.getPath() + " создан\n");
+                }
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
         }
+        return log;
+    }
 
-        File dirDrawables = new File(dirRes.getPath().concat("\\drawables"));
-        if (dirDrawables.mkdir()) {
-            log.append("Каталог " + dirDrawables.getName() + " создан\n");
-        }
-        File dirVectors = new File(dirRes.getPath().concat("\\vectors"));
-        if (dirVectors.mkdir()) {
-            log.append("Каталог " + dirVectors.getName() + " создан\n");
-        }
-        File dirIcons = new File(dirRes.getPath().concat("\\icons"));
-        if (dirIcons.mkdir()) {
-            log.append("Каталог " + dirIcons.getName() + " создан\n");
-        }
-
-        File fileTemp = new File(dirTemp.getPath().concat("\\temp.txt"));
-        try {
-            if (fileTemp.createNewFile()) {
-                log.append("Файл " + fileTemp.getName() + " создан\n");
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
-        try (FileWriter fr = new FileWriter(fileTemp.getPath(), false)) {
+    public static void writeLogToFile(String fileName, StringBuilder log){
+        File fileTemp = new File(fileName);
+        try(FileWriter fr = new FileWriter(fileTemp.getPath(), true)) {
             fr.write(log.toString());
         } catch (IOException e) {
             System.out.println(e.getMessage());
