@@ -13,13 +13,13 @@ public class Main {
         dirListMain.add("D:/Games/temp");
 
         List<String> dirListSrc = new ArrayList<>();
-        dirListSrc.add("main");
-        dirListSrc.add("test");
+        dirListSrc.add("D:/Games/src/main");
+        dirListSrc.add("D:/Games/src/test");
 
         List<String> dirListRes = new ArrayList<>();
-        dirListRes.add("drawables");
-        dirListRes.add("vectors");
-        dirListRes.add("icons");
+        dirListRes.add("D:/Games/res/drawables");
+        dirListRes.add("D:/Games/res/vectors");
+        dirListRes.add("D:/Games/res/icons");
 
         List<String> fileListMain = new ArrayList<>();
         fileListMain.add("Main.java");
@@ -38,24 +38,29 @@ public class Main {
         writeLogToFile("D:/Games/temp/temp.txt", log);
     }
 
-    public static StringBuilder createDirectories(List<String> dirList){
+    public static StringBuilder createDirectories(List<String> dirList) {
         StringBuilder log = new StringBuilder();
-        for(String dir : dirList){
+        for (String dir : dirList) {
             File dirToCreate = new File(dir);
-            if(dirToCreate.mkdir()){
+            if (dirToCreate.mkdir()) {
                 log.append("Каталог " + dirToCreate.getPath() + " создан\n");
+            } else if (dirToCreate.exists()) {
+                log.append("Каталог " + dirToCreate.getPath() + " уже существует\n");
             }
         }
         return log;
     }
 
-    public static StringBuilder createFiles(String dir, List<String> fileList){
+    public static StringBuilder createFiles(String dir, List<String> fileList) {
         StringBuilder log = new StringBuilder();
-        for(String fileName : fileList){
-            File fileTemp = new File(dir + fileName);
-            try{
-                if(fileTemp.createNewFile()){
-                    log.append("Файл " + fileTemp.getPath() + " создан\n");
+        for (String fileName : fileList) {
+            File fileTemp = new File(dir + '/' + fileName);
+            try {
+                if (fileTemp.exists()) {
+                    fileTemp.delete();
+                    if (fileTemp.createNewFile()) {
+                        log.append("Файл " + fileTemp.getPath() + " создан\n");
+                    }
                 }
             } catch (IOException e) {
                 System.out.println(e.getMessage());
@@ -64,9 +69,9 @@ public class Main {
         return log;
     }
 
-    public static void writeLogToFile(String fileName, StringBuilder log){
+    public static void writeLogToFile(String fileName, StringBuilder log) {
         File fileTemp = new File(fileName);
-        try(FileWriter fr = new FileWriter(fileTemp.getPath(), true)) {
+        try (FileWriter fr = new FileWriter(fileTemp.getPath(), false)) {
             fr.write(log.toString());
         } catch (IOException e) {
             System.out.println(e.getMessage());
